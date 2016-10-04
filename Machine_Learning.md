@@ -62,7 +62,7 @@ Note: In problems that have a random aspect (like this problem with kmeans()), t
 
 ##Instructions
 Use the kmeans() function. The first argument is my_iris; the second argument is 3, as you want to find three clusters in my_iris. Assign the result to a new variable, kmeans_iris.
-#The actual species of the observations is stored in species. Use table() to compare it to the groups that the clustering came up with. These groups can be found in the cluster attribute of kmeans_iris.
+The actual species of the observations is stored in species. Use table() to compare it to the groups that the clustering came up with. These groups can be found in the cluster attribute of kmeans_iris.
 Inspect the code that generates a plot of Petal.Length against Petal.Width and colors by cluster.
 ```
 # Set random seed. Don't remove this line.
