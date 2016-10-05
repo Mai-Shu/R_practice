@@ -486,11 +486,92 @@ Restricting your model too much
 High bias
 Too general
 ###Example-spam or not?
-
-
-
-
-
 ##Overfitting the spam!
+Do you remember the crude spam filter, spam_classifier(), from chapter 1? It filters spam based on the average sequential use of capital letters (avg_capital_seq) to decide whether an email was spam (1) or not (0).
+
+You may recall that we cheated and it perfectly filtered the spam. However, the set (emails_small) you used to test your classifier was only a small fraction of the entire dataset emails_full (Source: UCIMLR).
+
+Your job is to verify whether the spam_classifier() that was built for you generalizes to the entire set of emails. The accuracy for the set emails_small was equal to 1. Is the accuracy for the entire set emails_full substantially lower?
+###Instructions
+Apply spam_classifier() on the avg_capital_seq variable in emails_full and save the results in pred_full.
+Create a confusion matrix, using table(): conf_full. Put the true labels found in emails_full$spam in the rows.
+Use conf_full to calculate the accuracy: acc_full. The functions diag() and sum() will help. Print out the result.
+```
+# The spam filter that has been 'learned' for you
+spam_classifier <- function(x){
+  prediction <- rep(NA, length(x)) # initialize prediction vector
+  prediction[x > 4] <- 1 
+  prediction[x >= 3 & x <= 4] <- 0
+  prediction[x >= 2.2 & x < 3] <- 1
+  prediction[x >= 1.4 & x < 2.2] <- 0
+  prediction[x > 1.25 & x < 1.4] <- 1
+  prediction[x <= 1.25] <- 0
+  return(factor(prediction, levels = c("1", "0"))) # prediction is either 0 or 1
+}
+
+# Apply spam_classifier to emails_full: pred_full
+pred_full = spam_classifier(emails_full$avg_capital_seq)
+
+# Build confusion matrix for emails_full: conf_full
+conf_full = table(emails_full$spam, pred_full)
+
+# Calculate the accuracy with conf_full: acc_full
+acc_full = sum(diag(conf_full)) / sum(conf_full)
+
+# Print acc_full
+print(acc_full)
+```
 ##Increasing the bias
+It's official now, the spam_classifier() from chapter 1 is bogus. It simply overfits on the emails_small set and, as a result, doesn't generalize to larger datasets such as emails_full.
+
+So let's try something else. On average, emails with a high frequency of sequential capital letters are spam. What if you simply filtered spam based on one threshold for avg_capital_seq?
+
+For example, you could filter all emails with avg_capital_seq > 4 as spam. By doing this, you increase the interpretability of the classifier and restrict its complexity. However, this increases the bias, i.e. the error due to restricting your model.
+
+Your job is to simplify the rules of spam_classifier and calculate the accuracy for the full set emails_full. Next, compare it to that of the small set emails_small, which is coded for you. Does the model generalize now?
+
+###Instructions
+Simplify the rules of the spam_classifier. Emails with an avg_capital_seq strictly longer than 4 are spam (labeled with 1), all others are seen as no spam (0).
+Inspect the code that defines conf_small and acc_small.
+Set up the confusion matrix for the emails_full dataset. Put the true labels found in emails_full$spam in the rows and the predicted spam values in the columns. Assign to conf_full.
+Use conf_full to calculate the accuracy. Assign this value to acc_full and print it out. Before, acc_small and acc_full were 100% and 65%, respectively; what do you conclude?
+```
+# The all-knowing classifier that has been learned for you
+# You should change the code of the classifier, simplifying it
+spam_classifier <- function(x){
+  prediction <- rep(NA, length(x))
+  prediction[x > 4] <- 1
+  prediction[x <= 4] <- 0
+ 
+  return(factor(prediction, levels = c("1", "0")))
+}
+
+# conf_small and acc_small have been calculated for you
+conf_small <- table(emails_small$spam, spam_classifier(emails_small$avg_capital_seq))
+acc_small <- sum(diag(conf_small)) / sum(conf_small)
+acc_small
+
+# Apply spam_classifier to emails_full and calculate the confusion matrix: conf_full
+conf_full <- table(emails_full$spam, spam_classifier(emails_full$avg_capital_seq))
+
+# Calculate acc_full
+acc_full <- sum(diag(conf_full)) / sum(conf_full)
+
+# Print acc_full
+print(acc_full)
+```
 ##Interpretability
+Which of the following models do you think would have the highest interpretability? Remember that a high interpretability usually implies a high bias.
+
+It can help to try to describe what the model has to do to classify instances. Usually if you are able to describe what all aspects of a model do and what they mean, the model is quite interpretable.
+###Possible answers
+A) We've made a regression which fits perfectly through all 15 points in the training set. We used a high-degree polynomial. 
+-->Oops! That answer is not correct. Do you think you could explain why the polynomial behaves like it does? Wouldn't it be easier if you just had to explain the slope in a linear model, for example.
+Correct B) A model predicts whether a person with certain attributes is male or female. It uses one threshold on the height attribute to make its prediction. 
+
+C) A spam filter uses various rules on 10 attributes to classify whether an email is spam or not. It uses attributes such as specific word count, character count, and so on. 
+-->Incorrect! Allowing a learning algorithm to use a lot of attributes will decrease the bias on the model. This will generally increase the complexity.
+D) We made a prediction model for car insurance claims. It uses a few attributes and relations between these attributes to predict the amount of claims one will make.
+-->Almost. Using few attributes will reduce the complexity, but adding relationships between these attributes will increase the complexity. There is a simpler model in the list, try to find it!
+
+
