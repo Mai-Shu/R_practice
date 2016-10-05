@@ -135,7 +135,23 @@ Now you are going to classify the instances that are in the test set. As before,
 Use tree to predict the labels of the test set with the predict() function; store the resulting prediction in pred.
 Create a confusion matrix, conf, of your predictions on the test set. The true values, test$Survived, should be on the rows.
 Use the confusion matrix to print out the accuracy. This is the ratio of all correctly classified instances divided by the total number of classified instances, remember?
+```
+# The train and test set are loaded into your workspace.
 
+# Code from previous exercise
+set.seed(1)
+library(rpart)
+tree <- rpart(Survived ~ ., train, method = "class")
+
+# Predict the values of the test set: pred
+pred = predict(tree, test, type = "class")
+
+# Construct the confusion matrix: conf
+conf = table(test$Survived, pred)
+
+# Print out the accuracy
+print(sum(diag(conf)) / sum(conf))
+```
 
 
 
