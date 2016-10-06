@@ -617,7 +617,12 @@ library(ROCR)
 pred_t = prediction(probs_t, test$spam)
 pred_k = prediction(probs_k, test$spam)
 
+# Draw the ROC lines using draw_roc_lines()
+draw_roc_lines(perf_t, perf_k)
 
+## Make the performance objects for both models: perf_t, perf_k
+perf_t = performance(pred_t, "tpr", "fpr")
+perf_k = performance(pred_k, "tpr", "fpr")
 # Make the performance objects for both models: perf_t, perf_k
 perf_t = performance(pred_t, "tpr", "fpr")
 perf_k = performance(pred_k, "tpr", "fpr")
